@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . .
 
+WORKDIR /app/PicasyFijasK
+
 RUN chmod +x mvnw
 
 RUN ./mvnw clean package -DskipTests
