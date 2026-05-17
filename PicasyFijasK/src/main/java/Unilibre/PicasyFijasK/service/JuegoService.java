@@ -1,5 +1,6 @@
 package Unilibre.PicasyFijasK.service;
 
+import Unilibre.PicasyFijasK.dto.ResultadoDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,19 +27,20 @@ public class JuegoService {
         return resultado.toString();
     }
 
-    public String evaluar(String secreto, String intento) {
+    public ResultadoDTO evaluar(String secreto, String intento) {
         int picas = 0;
         int fijas = 0;
 
         for (int i = 0; i < intento.length(); i++) {
+            char actual = intento.charAt(i);
 
-            if (intento.charAt(i) == secreto.charAt(i)) {
+            if (actual == secreto.charAt(i)) {
                 fijas++;
-            } else if (secreto.contains("" + intento.charAt(i))) {
+            } else if (secreto.indexOf(actual) != -1) {
                 picas++;
             }
         }
 
-        return "Picas: " + picas + " - Fijas: " + fijas;
+        return new ResultadoDTO(picas, fijas, 0, false);
     }
 }

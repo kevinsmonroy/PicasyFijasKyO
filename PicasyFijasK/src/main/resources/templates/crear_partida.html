@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Picas y Fijas - Nueva Partida</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f9; color: #333; }
+        .container { max-width: 450px; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 auto; }
+        h2 { text-align: center; color: #222; margin-bottom: 20px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; }
+        select, input[type="number"] { width: 100%; padding: 10px; font-size: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        select:focus, input[type="number"]:focus { border-color: #007bff; outline: none; }
+        button { background-color: #007bff; color: white; border: none; padding: 12px 15px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
+        button:hover { background-color: #0056b3; }
+        .info-box { background-color: #e8f4fd; border-left: 4px solid #17a2b8; padding: 12px; margin-bottom: 20px; font-size: 14px; border-radius: 0 4px 4px 0; }
+        .footer-text { text-align: center; margin-top: 15px; font-size: 14px; color: #6c757d; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🎮 Configurar Partida</h2>
+
+    <div class="info-box">
+        ¡El sistema generará automáticamente un <strong>número secreto de 4 dígitos únicos</strong> que deberás adivinar usando pistas de Picas y Fijas!
+    </div>
+
+    <form th:action="@{/partidas/crear}" th:object="${partida}" method="post">
+
+
+        <div class="form-group">
+            <label for="usuarioId">ID del Jugador Anfitrión:</label>
+            <input type="number"
+                   id="usuarioId"
+                   th:field="*{usuario.id}"
+                   placeholder="Ingresa tu ID de usuario"
+                   required
+                   min="1"
+                   autocomplete="off">
+        </div>
+
+        <button type="submit">🚀 Iniciar Partida</button>
+    </form>
+
+    <p class="footer-text">Proyecto PicasyFijasK - Unlibre</p>
+</div>
+
+</body>
+</html>
+
