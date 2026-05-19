@@ -30,7 +30,13 @@ public class UsuarioController {
         Usuario usuario = new Usuario();
         usuario.setNombre(dto.getNombre());
         usuario.setEmail(dto.getEmail());
-        usuario.setAvatarUrl(dto.getAvatarUrl());
+
+        //  VALIDAR AVATAR
+        if (dto.getAvatarUrl() == null || dto.getAvatarUrl().isBlank()) {
+            usuario.setAvatarUrl("https://i.imgur.com/Z7AzH2c.png"); //  default
+        } else {
+            usuario.setAvatarUrl(dto.getAvatarUrl());
+        }
 
         Usuario usuarioGuardado = service.guardar(usuario);
 

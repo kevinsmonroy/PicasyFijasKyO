@@ -80,8 +80,13 @@
                    th:field="*{intento}"
                    placeholder="Ej: 1234"
                    maxlength="4"
+                   pattern="\d{4}"
+                   title="Debes ingresar exactamente 4 números"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                   onpaste="setTimeout(() => this.value = this.value.replace(/\D/g, ''), 0)"
                    required
                    autocomplete="off">
+
             <button type="submit">Validar Intento</button>
         </form>
     </div>
