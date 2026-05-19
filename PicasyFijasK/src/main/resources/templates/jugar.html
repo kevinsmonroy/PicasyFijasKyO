@@ -1,82 +1,111 @@
 <!DOCTYPE html>
-<html xmlns:th="http://thymeleaf.org">
+<html xmlns:th="https://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Picas y Fijas - En Juego</title>
     <style>
-
         body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f9; color: #333; }
-        .container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        input[type="text"] { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #007bff; color: white; border: none; padding: 10px 15px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; }
+        .container { max-width: 600px; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 auto; }
+        .profile-container { text-align: center; margin-bottom: 20px; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #007bff; }
+        input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; margin-bottom: 10px; text-align: center; letter-spacing: 5px; font-weight: bold; }
+        button { background-color: #007bff; color: white; padding: 12px; border-radius: 4px; width: 100%; border: none; font-size: 16px; font-weight: bold; cursor: pointer; }
         button:hover { background-color: #0056b3; }
-        .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .btn-restart { background-color: #28a745; text-decoration: none; display: inline-block; width: auto; padding: 12px 25px; margin-top: 20px; color: white; border-radius: 4px; font-weight: bold; }
+        .btn-restart:hover { background-color: #218838; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background-color: #f8f9fa; }
-        .game-over { background-color: #e2e3e5; color: #383d41; }
+        .error-message { color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; }
+
+        /* 🎉 PANTALLA FINAL */
+        .victory-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a1a1a, #000);
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column; color: white; z-index: 9999;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .victory-screen h1 { font-size: 3.5em; margin-bottom: 10px; }
+        .victory-screen p { font-size: 1.5em; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 🎊 CONFETTI */
+        .confetti { position: absolute; width: 10px; height: 10px; top: -10px; animation: fall 4s linear infinite; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
     </style>
 </head>
 <body>
-<div style="text-align: center; margin-bottom: 15px;">
-    <img th:src="${usuario.avatarUrl}" width="80" style="border-radius: 50%; object-fit: cover;" alt="Avatar de usuario">
-</div>
 
 <div class="container">
-    <h2>🎮 Picas y Fijas (Mastermind)</h2>
-    <p><strong>ID de la Partida:</strong> <span th:text="${partidaId}">0</span></p>
 
-    <div th:if="${resultado != null}" class="alert alert-info">
-        <h3>Resultado de la jugada anterior:</h3>
-        <p>🔴 <strong>Fijas:</strong> <span th:text="${resultado.fijas}">0</span> (Dígitos correctos en la posición correcta)</p>
-        <p>🔵 <strong>Picas:</strong> <span th:text="${resultado.picas}">0</span> (Dígitos correctos en la posición incorrecta)</p>
-        <p>🔢 <strong>Intentos totales:</strong> <span th:text="${resultado.intentos}">0</span></p>
+    <!-- 🎉 PANTALLA DE VICTORIA (Evita error de índice -1 verificando que la lista no esté vacía primero) -->
+    <div th:if="${historial != null and !historial.isEmpty() and historial.get(historial.size()-1).fijas == 4}" class="victory-screen">
+        <h1>🎉 ¡GANASTE! 🎉</h1>
+        <p>Encontraste el número secreto 😎</p>
+
+        <!-- CORREGIDO: Etiqueta de enlace HTML bien estructurada -->
+        <a th:href="@{/usuarios/nuevo}" class="btn-restart">🔄 Jugar de nuevo</a>
+
+        <!-- CONFETTI -->
+        <script>
+            for (let i = 0; i < 100; i++) {
+                let confetti = document.createElement("div");
+                confetti.classList.add("confetti");
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.backgroundColor = `hsl(${Math.random()*360},100%,50%)`;
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                document.body.appendChild(confetti);
+            }
+        </script>
     </div>
+
+    <!-- 🧠 CONTENIDO DE JUEGO -->
+    <div class="profile-container">
+        <!-- CORREGIDO: Imagen HTML y textos reparados -->
+        <img th:src="${usuario.avatarUrl != null ? usuario.avatarUrl : 'https://placeholder.com'}" class="avatar" alt="Avatar">
+        <h2>Picas y Fijas</h2>
+        <p>Partida ID: <span th:text="${partidaId}">-</span></p>
+    </div>
+
+    <!-- Mensaje de error si el input es inválido -->
+    <div class="error-message" th:if="${error}" th:text="${error}"></div>
+
+    <!-- FORMULARIO DE INTENTOS (Solo se muestra si la lista está vacía o si el último intento no logró 4 fijas) -->
+    <div th:if="${historial == null || historial.isEmpty() || historial.get(historial.size()-1).fijas != 4}">
+        <!-- CORREGIDO: Sintaxis interna del formulario reparada -->
+        <form th:action="@{/partidas/intentar/{id}(id=${partidaId})}" th:object="${intentoDTO}" method="post">
+            <input type="text"
+                   th:field="*{intento}"
+                   placeholder="Ej: 1234"
+                   maxlength="4"
+                   required
+                   autocomplete="off">
+            <button type="submit">Validar Intento</button>
+        </form>
+    </div>
+
+    <!-- TABLA DE HISTORIAL -->
     <table>
+        <thead>
         <tr>
             <th>Intento</th>
             <th>Fijas</th>
             <th>Picas</th>
         </tr>
-
+        </thead>
+        <tbody>
         <tr th:each="res : ${historial}">
-            <td th:text="${res.intento}"></td>
-            <td th:text="${res.fijas}"></td>
-            <td th:text="${res.picas}"></td>
+            <td th:text="${res.intento}">1234</td>
+            <td th:text="${res.fijas}">0</td>
+            <td th:text="${res.picas}">0</td>
         </tr>
+        </tbody>
     </table>
 
-    <div th:if="${resultado != null && resultado.ganado}" class="alert alert-success">
-        <h3>¡Felicidades! 🎉 ¡Has ganado la partida!</h3>
-        <p>Tu puntaje final es de: <span th:text="${resultado.puntaje != null ? resultado.puntaje : 'Calculando...'}">100</span> puntos.</p>
-        <a th:href="@{/partidas/nueva}"><button type="button" style="background-color: #28a745;">Jugar otra vez</button></a>
-    </div>
-
-    <div th:if="${resultado == null || !resultado.ganado}">
-        <form th:action="@{/partidas/intentar/{id}(id=${partidaId})}" th:object="${intentoDTO}" method="post">
-            <div class="form-group">
-                <label th:for="intento"><strong>Ingresa tu número (4 dígitos sin repetir):</strong></label>
-                <br><br>
-                <input type="text"
-                       th:field="*{intento}"
-                       placeholder="Ej: 1234"
-                       maxlength="4"
-                       pattern="\d{4}"
-                       required
-                       autocomplete="off"
-                       autofocus>
-            </div>
-            <button type="submit">Validar Intento</button>
-        </form>
-    </div>
-
-    <p style="margin-top: 20px; text-align: center;">
-        <a th:href="@{/partidas/nueva}" style="color: #6c757d; text-decoration: none;">← Salir al menú principal</a>
-    </p>
 </div>
 
 </body>
 </html>
+

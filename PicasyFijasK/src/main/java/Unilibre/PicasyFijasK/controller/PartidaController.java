@@ -24,7 +24,7 @@ public class PartidaController {
         this.service = service;
     }
 
-    // CREAR FORMULARIO PARTIDA
+    //  FORMULARIO PARTIDA
     @GetMapping("/nueva")
     public String nuevaPartida(@RequestParam Long usuarioId, Model model) {
 
@@ -49,13 +49,13 @@ public class PartidaController {
         return "redirect:/partidas/jugar/" + partidaGuardada.getId();
     }
 
-    // ENTRAR A JUGAR
+    //  VISTA DEL JUEGO
     @GetMapping("/jugar/{id}")
     public String jugarVista(@PathVariable Long id, Model model, HttpSession session) {
 
         Partida partida = service.obtenerPorId(id);
 
-        //  NO borrar historial si ya existe
+        //  Recuperar historial
         List<ResultadoDTO> historial =
                 (List<ResultadoDTO>) session.getAttribute("historial");
 
@@ -64,6 +64,11 @@ public class PartidaController {
             session.setAttribute("historial", historial);
         }
 
+        // Recuperar error si existe
+        String error = (String) session.getAttribute("error");
+        session.removeAttribute("error");
+
+        model.addAttribute("error", error);
         model.addAttribute("historial", historial);
         model.addAttribute("partidaId", id);
         model.addAttribute("intentoDTO", new IntentoDTO());
@@ -72,31 +77,21 @@ public class PartidaController {
         return "jugar";
     }
 
-    // HACER INTENTO
+    //  INTENTAR (POST → PROCESAR Y REDIRIGIR)
     @PostMapping("/intentar/{id}")
     public String intentar(@PathVariable Long id,
                            @ModelAttribute IntentoDTO dto,
-                           Model model,
                            HttpSession session) {
+
+        //  Validación
+        if (dto.getIntento() == null || dto.getIntento().isBlank()) {
+            session.setAttribute("error", "Debes ingresar un número de 4 dígitos");
+            return "redirect:/partidas/jugar/" + id;
+        }
 
         Partida partida = service.obtenerPorId(id);
 
-        //  VALIDACIÓN (evita el error 500)
-        if (dto.getIntento() == null || dto.getIntento().isEmpty()) {
-            model.addAttribute("error", "Debes ingresar un número de 4 dígitos");
-            model.addAttribute("usuario", partida.getUsuario());
-            model.addAttribute("partidaId", id);
-            model.addAttribute("intentoDTO", new IntentoDTO());
-
-            List<ResultadoDTO> historial =
-                    (List<ResultadoDTO>) session.getAttribute("historial");
-
-            model.addAttribute("historial", historial);
-
-            return "jugar";
-        }
-
-        // OBTENER HISTORIAL
+        //  Obtener historial
         List<ResultadoDTO> historial =
                 (List<ResultadoDTO>) session.getAttribute("historial");
 
@@ -104,21 +99,16 @@ public class PartidaController {
             historial = new ArrayList<>();
         }
 
-        //  EJECUTAR JUEGO
+        //  Ejecutar juego
         ResultadoDTO resultado = service.jugar(id, dto.getIntento());
         resultado.setIntento(dto.getIntento());
 
         historial.add(resultado);
 
-        //  GUARDAR EN SESIÓN
+        //  Guardar en sesión
         session.setAttribute("historial", historial);
 
-        //  ENVIAR TODOS LOS DATOS A LA VISTA
-        model.addAttribute("historial", historial);
-        model.addAttribute("usuario", partida.getUsuario());
-        model.addAttribute("partidaId", id);
-        model.addAttribute("intentoDTO", new IntentoDTO());
-
-        return "jugar";
+        //  REDIRECCIÓN
+        return "redirect:/partidas/jugar/" + id;
     }
 }
