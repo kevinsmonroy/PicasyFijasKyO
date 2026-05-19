@@ -24,6 +24,34 @@ public class PartidaController {
         this.service = service;
     }
 
+    @PostMapping("/crear")
+    public String crear(@ModelAttribute Partida partida,
+                        HttpSession session) {
+
+        Long usuarioId = (Long) session.getAttribute("usuarioId");
+
+        if (usuarioId == null) {
+            return "redirect:/usuarios/nuevo";
+        }
+
+        //  asignar usuario desde sesión
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+        partida.setUsuario(usuario);
+
+        //  limpiar sesión (muy importante)
+        session.removeAttribute("historial");
+        session.removeAttribute("resultado");
+        session.removeAttribute("error");
+
+        //  crear partida con nivel elegido
+        Partida partidaGuardada = service.crearPartida(partida);
+
+        //  redirigir al juego
+        return "redirect:/partidas/jugar/" + partidaGuardada.getId();
+    }
+
+
     //  CREAR Y ENTRAR DIRECTAMENTE A UNA NUEVA PARTIDA (SIN FORMULARIO)
     @GetMapping("/nueva")
     public String nuevaPartida(HttpSession session) {
