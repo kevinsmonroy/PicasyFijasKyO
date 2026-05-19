@@ -30,9 +30,11 @@ public class PartidaService {
 
 
         //  NIVEL (MUY IMPORTANTE)
-        if (partida.getMaxIntentos() == 0) {
+
+        if (partida.getMaxIntentos() == null || partida.getMaxIntentos() == 0) {
             throw new RuntimeException("Debes seleccionar un nivel válido");
         }
+
 
 
         return repository.save(partida);

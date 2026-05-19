@@ -19,7 +19,7 @@ public class Partida {
     private int intentos;
     private boolean ganado;
     private int puntaje;
-    private int maxIntentos;
+    private Integer maxIntentos;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
