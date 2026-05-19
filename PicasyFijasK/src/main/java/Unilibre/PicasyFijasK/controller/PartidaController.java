@@ -70,6 +70,15 @@ public class PartidaController {
                            Model model,
                            HttpSession session) {
 
+        // ✅ Validar input
+        if (dto.getIntento() == null || dto.getIntento().isEmpty()) {
+            model.addAttribute("error", "Debes ingresar un número");
+            model.addAttribute("partidaId", id);
+            model.addAttribute("intentoDTO", new IntentoDTO());
+            return "jugar";
+        }
+
+        // ✅ Obtener historial
         List<ResultadoDTO> historial =
                 (List<ResultadoDTO>) session.getAttribute("historial");
 
@@ -77,6 +86,7 @@ public class PartidaController {
             historial = new ArrayList<>();
         }
 
+        // ✅ Jugar
         ResultadoDTO resultado = service.jugar(id, dto.getIntento());
         resultado.setIntento(dto.getIntento());
 
