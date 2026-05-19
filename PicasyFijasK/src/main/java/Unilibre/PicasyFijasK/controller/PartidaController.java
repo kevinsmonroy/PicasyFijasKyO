@@ -24,6 +24,7 @@ public class PartidaController {
         this.service = service;
     }
 
+    //  CREAR PARTIDA DESDE FORMULARIO (CON NIVEL)
     @PostMapping("/crear")
     public String crear(@ModelAttribute Partida partida,
                         HttpSession session) {
@@ -34,53 +35,56 @@ public class PartidaController {
             return "redirect:/usuarios/nuevo";
         }
 
-        //  asignar usuario desde sesión
+        //  ASIGNAR USUARIO DESDE SESIÓN
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
         partida.setUsuario(usuario);
 
-        //  limpiar sesión (muy importante)
+        //  VALIDACIÓN DE SEGURIDAD
+        if (partida.getMaxIntentos() == null || partida.getMaxIntentos() == 0) {
+            partida.setMaxIntentos(10);
+        }
+
+        //  LIMPIAR SESIÓN
         session.removeAttribute("historial");
         session.removeAttribute("resultado");
         session.removeAttribute("error");
 
-        //  crear partida con nivel elegido
+        //  CREAR PARTIDA
         Partida partidaGuardada = service.crearPartida(partida);
 
-        //  redirigir al juego
         return "redirect:/partidas/jugar/" + partidaGuardada.getId();
     }
 
-
-    //  CREAR Y ENTRAR DIRECTAMENTE A UNA NUEVA PARTIDA (SIN FORMULARIO)
+    //  NUEVA PARTIDA RÁPIDA (SIN FORMULARIO)
     @GetMapping("/nueva")
     public String nuevaPartida(HttpSession session) {
 
         Long usuarioId = (Long) session.getAttribute("usuarioId");
 
-        //  Si no hay usuario en sesión, volver al registro
         if (usuarioId == null) {
             return "redirect:/usuarios/nuevo";
         }
 
-        //  Limpiar datos anteriores
+        //  LIMPIAR
         session.removeAttribute("historial");
         session.removeAttribute("resultado");
         session.removeAttribute("error");
 
-        //  Crear partida automáticamente
+        //  CREAR PARTIDA CON DEFAULT
         Partida partida = new Partida();
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
+
         partida.setUsuario(usuario);
+        partida.setMaxIntentos(10); //
 
         Partida partidaGuardada = service.crearPartida(partida);
 
-        //  Ir directo al juego
         return "redirect:/partidas/jugar/" + partidaGuardada.getId();
     }
 
-    //  MOSTRAR VISTA DE JUEGO
+    //  VISTA
     @GetMapping("/jugar/{id}")
     public String jugarVista(@PathVariable Long id,
                              Model model,
@@ -88,7 +92,6 @@ public class PartidaController {
 
         Partida partida = service.obtenerPorId(id);
 
-        //  Obtener historial
         List<ResultadoDTO> historial =
                 (List<ResultadoDTO>) session.getAttribute("historial");
 
@@ -97,13 +100,10 @@ public class PartidaController {
             session.setAttribute("historial", historial);
         }
 
-        //  Recuperar resultado (solo 1 vez)
         ResultadoDTO resultado =
                 (ResultadoDTO) session.getAttribute("resultado");
-
         session.removeAttribute("resultado");
 
-        //  Recuperar error (solo 1 vez)
         String error = (String) session.getAttribute("error");
         session.removeAttribute("error");
 
@@ -111,8 +111,6 @@ public class PartidaController {
                 && partida.getIntentos() >= partida.getMaxIntentos());
 
         model.addAttribute("perdido", perdido);
-
-        //  Enviar datos a vista
         model.addAttribute("resultado", resultado);
         model.addAttribute("error", error);
         model.addAttribute("historial", historial);
@@ -120,24 +118,22 @@ public class PartidaController {
         model.addAttribute("intentoDTO", new IntentoDTO());
         model.addAttribute("usuario", partida.getUsuario());
         model.addAttribute("ganado", partida.isGanado());
-        model.addAttribute("partida",partida);
+        model.addAttribute("partida", partida);
 
         return "jugar";
     }
 
-    //  PROCESAR INTENTO (PRG: REDIRECT)
+    // INTENTAR
     @PostMapping("/intentar/{id}")
     public String intentar(@PathVariable Long id,
                            @ModelAttribute IntentoDTO dto,
                            HttpSession session) {
 
-        //  Validar input
         if (dto.getIntento() == null || !dto.getIntento().matches("\\d{4}")) {
             session.setAttribute("error", "Debe ingresar 4 números válidos");
             return "redirect:/partidas/jugar/" + id;
         }
 
-        //  Obtener historial
         List<ResultadoDTO> historial =
                 (List<ResultadoDTO>) session.getAttribute("historial");
 
@@ -145,17 +141,15 @@ public class PartidaController {
             historial = new ArrayList<>();
         }
 
-        //  Ejecutar juego
         ResultadoDTO resultado = service.jugar(id, dto.getIntento());
         resultado.setIntento(dto.getIntento());
 
         historial.add(resultado);
 
-        //  Guardar en sesión
         session.setAttribute("historial", historial);
         session.setAttribute("resultado", resultado);
 
-        //  Redireccionar
         return "redirect:/partidas/jugar/" + id;
     }
 }
+

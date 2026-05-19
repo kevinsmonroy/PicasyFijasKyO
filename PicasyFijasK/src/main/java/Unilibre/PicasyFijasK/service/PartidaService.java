@@ -32,7 +32,7 @@ public class PartidaService {
         //  NIVEL (MUY IMPORTANTE)
 
         if (partida.getMaxIntentos() == null || partida.getMaxIntentos() == 0) {
-            throw new RuntimeException("Debes seleccionar un nivel válido");
+            partida.setMaxIntentos(10); // fallback seguro
         }
 
 
