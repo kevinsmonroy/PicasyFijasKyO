@@ -66,6 +66,9 @@
         <!-- CORREGIDO: Imagen HTML y textos reparados -->
         <img th:src="${usuario.avatarUrl != null ? usuario.avatarUrl : 'https://placeholder.com'}" class="avatar" alt="Avatar">
         <h2>Picas y Fijas</h2>
+        <p style="text-align:center; font-size:18px; color:#007bff;">
+            🔢 Intentos: <strong th:text="${historial.size()}">0</strong>
+        </p>
         <p>Partida ID: <span th:text="${partidaId}">-</span></p>
     </div>
 

@@ -4,6 +4,7 @@ import Unilibre.PicasyFijasK.dto.UsuarioDTO;
 import Unilibre.PicasyFijasK.entity.Usuario;
 import Unilibre.PicasyFijasK.service.UsuarioService;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,23 +26,26 @@ public class UsuarioController {
     }
 
     @PostMapping("/crear")
-    public String crear(@ModelAttribute UsuarioDTO dto) {
+    public String crear(@ModelAttribute UsuarioDTO dto, HttpSession session) {
 
         Usuario usuario = new Usuario();
         usuario.setNombre(dto.getNombre());
         usuario.setEmail(dto.getEmail());
 
-        //  VALIDAR AVATAR
         if (dto.getAvatarUrl() == null || dto.getAvatarUrl().isBlank()) {
-            usuario.setAvatarUrl("https://i.imgur.com/Z7AzH2c.png"); //  default
+            usuario.setAvatarUrl("https://i.imgur.com/Z7AzH2c.png");
         } else {
             usuario.setAvatarUrl(dto.getAvatarUrl());
         }
 
         Usuario usuarioGuardado = service.guardar(usuario);
 
-        return "redirect:/partidas/nueva?usuarioId=" + usuarioGuardado.getId();
+
+        session.setAttribute("usuarioId", usuarioGuardado.getId());
+
+        return "redirect:/partidas/nueva";
     }
+
 
 
     @GetMapping("/test")

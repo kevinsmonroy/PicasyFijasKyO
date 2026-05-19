@@ -26,7 +26,13 @@ public class PartidaController {
 
     //  FORMULARIO PARTIDA
     @GetMapping("/nueva")
-    public String nuevaPartida(@RequestParam Long usuarioId, Model model) {
+    public String nuevaPartida(HttpSession session, Model model) {
+
+        Long usuarioId = (Long) session.getAttribute("usuarioId");
+
+        if (usuarioId == null) {
+            return "redirect:/usuarios/nuevo";
+        }
 
         Partida partida = new Partida();
 
