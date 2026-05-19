@@ -8,5 +8,7 @@ import java.util.List;
 public interface PartidaRepository extends JpaRepository<Partida, Long> {
 
     List<Partida> findByUsuarioId(Long usuarioId);
+    List<Partida> findAllByOrderByPuntajeDesc();
+
 
 }
