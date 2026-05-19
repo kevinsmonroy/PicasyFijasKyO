@@ -36,4 +36,11 @@ public class UsuarioController {
 
         return "redirect:/partidas/nueva";
     }
+
+    @GetMapping("/test")
+    @ResponseBody
+    public String test() {
+        return "CONEXION EXITOSA CON EL CONTROLADOR ✅";
+    }
+
 }
