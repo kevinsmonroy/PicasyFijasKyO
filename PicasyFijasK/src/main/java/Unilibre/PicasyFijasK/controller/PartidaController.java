@@ -55,17 +55,18 @@ public class PartidaController {
 
         Partida partida = service.obtenerPorId(id);
 
-        //  Recuperar historial
-        List<ResultadoDTO> historial = new ArrayList<>();
+        List<ResultadoDTO> historial =
+                (List<ResultadoDTO>) session.getAttribute("historial");
 
-//  RESETEAR SIEMPRE AL INICIAR UNA PARTIDA NUEVA
-        session.setAttribute("historial", historial);
+        if (historial == null) {
+            historial = new ArrayList<>();
+            session.setAttribute("historial", historial);
+        }
 
-        // Recuperar error si existe
-        String error = (String) session.getAttribute("error");
-        session.removeAttribute("error");
+        ResultadoDTO resultado = (ResultadoDTO) session.getAttribute("resultado");
+        session.removeAttribute("resultado");
 
-        model.addAttribute("error", error);
+        model.addAttribute("resultado", resultado);
         model.addAttribute("historial", historial);
         model.addAttribute("partidaId", id);
         model.addAttribute("intentoDTO", new IntentoDTO());
@@ -102,10 +103,13 @@ public class PartidaController {
 
         historial.add(resultado);
 
-        //  Guardar en sesión
-        session.setAttribute("historial", historial);
 
-        //  REDIRECCIÓN
+
+        session.setAttribute("historial", historial);
+        session.setAttribute("resultado", resultado); //  NUEVO
+
         return "redirect:/partidas/jugar/" + id;
+
+
     }
 }
