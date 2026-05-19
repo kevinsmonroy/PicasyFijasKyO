@@ -6,6 +6,7 @@ import Unilibre.PicasyFijasK.entity.Partida;
 import Unilibre.PicasyFijasK.entity.Usuario;
 import Unilibre.PicasyFijasK.service.PartidaService;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -47,9 +48,11 @@ public class PartidaController {
     }
 
     @GetMapping("/jugar/{id}")
-    public String jugarVista(@PathVariable Long id, Model model) {
+    public String jugarVista(@PathVariable Long id, Model model, HttpSession session) {
 
         Partida partida = service.obtenerPorId(id);
+
+        session.setAttribute("historial", new ArrayList<>());
 
         model.addAttribute("partidaId", id);
         model.addAttribute("intentoDTO", new IntentoDTO());
@@ -59,11 +62,16 @@ public class PartidaController {
     }
 
 
+
+
     @PostMapping("/intentar/{id}")
     public String intentar(@PathVariable Long id,
                            @ModelAttribute IntentoDTO dto,
                            Model model,
-                           @SessionAttribute(value = "historial", required = false) List<ResultadoDTO> historial) {
+                           HttpSession session) {
+
+        List<ResultadoDTO> historial =
+                (List<ResultadoDTO>) session.getAttribute("historial");
 
         if (historial == null) {
             historial = new ArrayList<>();
@@ -74,11 +82,14 @@ public class PartidaController {
 
         historial.add(resultado);
 
+        session.setAttribute("historial", historial);
+
         model.addAttribute("historial", historial);
         model.addAttribute("partidaId", id);
         model.addAttribute("intentoDTO", new IntentoDTO());
 
         return "jugar";
     }
+
 
 }
