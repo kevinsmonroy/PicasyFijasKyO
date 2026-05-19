@@ -28,6 +28,13 @@ public class PartidaService {
         partida.setGanado(false);
         partida.setPuntaje(0);
 
+
+        //  NIVEL (MUY IMPORTANTE)
+        if (partida.getMaxIntentos() == 0) {
+            throw new RuntimeException("Debes seleccionar un nivel válido");
+        }
+
+
         return repository.save(partida);
     }
 
@@ -43,7 +50,23 @@ public class PartidaService {
         );
 
         // aumentar intentos
+
+// aumentar intentos
         partida.setIntentos(partida.getIntentos() + 1);
+
+//  validar si ya alcanzó el límite de intentos
+        if (partida.getIntentos() >= partida.getMaxIntentos()) {
+
+            // si NO ganó todavía → perdió
+            if (resultado.getFijas() < 4) {
+                partida.setGanado(false);
+
+                //
+                //
+            }
+        }
+
+
 
         // verificar si ganó
         if (resultado.getFijas() == 4) {
@@ -51,8 +74,11 @@ public class PartidaService {
         }
 
         // calcular puntaje
-        int puntaje = 100 - (partida.getIntentos() * 10);
+
+        int puntaje = (partida.getMaxIntentos() - partida.getIntentos() + 1) * 10;
+
         if (puntaje < 0) puntaje = 0;
+
 
         partida.setPuntaje(puntaje);
 

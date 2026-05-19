@@ -79,6 +79,11 @@ public class PartidaController {
         String error = (String) session.getAttribute("error");
         session.removeAttribute("error");
 
+        boolean perdido = (!partida.isGanado()
+                && partida.getIntentos() >= partida.getMaxIntentos());
+
+        model.addAttribute("perdido", perdido);
+
         //  Enviar datos a vista
         model.addAttribute("resultado", resultado);
         model.addAttribute("error", error);
@@ -87,6 +92,7 @@ public class PartidaController {
         model.addAttribute("intentoDTO", new IntentoDTO());
         model.addAttribute("usuario", partida.getUsuario());
         model.addAttribute("ganado", partida.isGanado());
+        model.addAttribute("partida",partida);
 
         return "jugar";
     }
