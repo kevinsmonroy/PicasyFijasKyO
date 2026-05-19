@@ -56,13 +56,10 @@ public class PartidaController {
         Partida partida = service.obtenerPorId(id);
 
         //  Recuperar historial
-        List<ResultadoDTO> historial =
-                (List<ResultadoDTO>) session.getAttribute("historial");
+        List<ResultadoDTO> historial = new ArrayList<>();
 
-        if (historial == null) {
-            historial = new ArrayList<>();
-            session.setAttribute("historial", historial);
-        }
+//  RESETEAR SIEMPRE AL INICIAR UNA PARTIDA NUEVA
+        session.setAttribute("historial", historial);
 
         // Recuperar error si existe
         String error = (String) session.getAttribute("error");
