@@ -43,7 +43,8 @@ public class UsuarioController {
 
         session.setAttribute("usuarioId", usuarioGuardado.getId());
 
-        return "redirect:/partidas/nueva";
+        return "redirect:/partidas/formulario";
+
     }
 
 

@@ -55,6 +55,13 @@ public class PartidaController {
 
         return "redirect:/partidas/jugar/" + partidaGuardada.getId();
     }
+    @GetMapping("/formulario")
+    public String mostrarFormulario(Model model) {
+
+        model.addAttribute("partida", new Partida());
+
+        return "crear_partida";
+    }
 
     //  NUEVA PARTIDA RÁPIDA (SIN FORMULARIO)
     @GetMapping("/nueva")
