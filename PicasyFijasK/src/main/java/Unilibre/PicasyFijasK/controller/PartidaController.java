@@ -42,18 +42,28 @@ public class PartidaController {
 
     //  CREAR PARTIDA
     @PostMapping("/crear")
-    public String crear(@ModelAttribute Partida partida) {
+    public String crear(@ModelAttribute Partida partida, HttpSession session) {
+
+        // LIMPIAR
+        session.removeAttribute("historial");
+        session.removeAttribute("resultado");
+        session.removeAttribute("error");
 
         Partida partidaGuardada = service.crearPartida(partida);
 
         return "redirect:/partidas/jugar/" + partidaGuardada.getId();
     }
 
+
     //  VISTA DEL JUEGO
     @GetMapping("/jugar/{id}")
     public String jugarVista(@PathVariable Long id, Model model, HttpSession session) {
 
         Partida partida = service.obtenerPorId(id);
+
+        // LIMPIAR SOLO RESULTADO Y ERROR
+        session.removeAttribute("resultado");
+        session.removeAttribute("error");
 
         List<ResultadoDTO> historial =
                 (List<ResultadoDTO>) session.getAttribute("historial");
@@ -63,10 +73,7 @@ public class PartidaController {
             session.setAttribute("historial", historial);
         }
 
-        ResultadoDTO resultado = (ResultadoDTO) session.getAttribute("resultado");
-        session.removeAttribute("resultado");
-
-        model.addAttribute("resultado", resultado);
+        model.addAttribute("ganado", partida.isGanado());
         model.addAttribute("historial", historial);
         model.addAttribute("partidaId", id);
         model.addAttribute("intentoDTO", new IntentoDTO());
