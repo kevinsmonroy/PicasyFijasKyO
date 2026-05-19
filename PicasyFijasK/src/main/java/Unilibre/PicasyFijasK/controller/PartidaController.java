@@ -3,6 +3,7 @@ package Unilibre.PicasyFijasK.controller;
 import Unilibre.PicasyFijasK.dto.IntentoDTO;
 import Unilibre.PicasyFijasK.dto.ResultadoDTO;
 import Unilibre.PicasyFijasK.entity.Partida;
+import Unilibre.PicasyFijasK.entity.Usuario;
 import Unilibre.PicasyFijasK.service.PartidaService;
 
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,11 @@ public class PartidaController {
 
     @GetMapping("/nueva")
     public String nuevaPartida(Model model) {
-        model.addAttribute("partida", new Partida());
+
+        Partida partida = new Partida();
+        partida.setUsuario(new Usuario());
+
+        model.addAttribute("partida", partida);
         return "crear_partida";
     }
 
