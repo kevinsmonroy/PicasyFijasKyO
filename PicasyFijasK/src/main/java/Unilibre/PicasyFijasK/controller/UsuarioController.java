@@ -32,15 +32,18 @@ public class UsuarioController {
         usuario.setEmail(dto.getEmail());
         usuario.setAvatarUrl(dto.getAvatarUrl());
 
-        service.guardar(usuario);
+        Usuario usuarioGuardado = service.guardar(usuario);
 
-        return "redirect:/partidas/nueva";
+        return "redirect:/partidas/nueva?usuarioId=" + usuarioGuardado.getId();
     }
+
 
     @GetMapping("/test")
     @ResponseBody
     public String test() {
-        return "CONEXION EXITOSA CON EL CONTROLADOR ✅";
+        return "CONEXION EXITOSA CON EL CONTROLADOR ";
     }
+
+
 
 }

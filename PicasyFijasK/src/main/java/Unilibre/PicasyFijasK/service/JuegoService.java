@@ -41,6 +41,11 @@ public class JuegoService {
             }
         }
 
-        return new ResultadoDTO(picas, fijas, 0, false);
+
+        ResultadoDTO resultado = new ResultadoDTO();
+        resultado.setPicas(picas);
+        resultado.setFijas(fijas);
+        return resultado;
+
     }
 }

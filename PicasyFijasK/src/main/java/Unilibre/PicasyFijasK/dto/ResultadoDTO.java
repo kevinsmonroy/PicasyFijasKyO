@@ -9,6 +9,7 @@ public class ResultadoDTO {
 
     private int picas;
     private int fijas;
+    private String intento;
     private int intentos;
     private boolean ganado;
 }

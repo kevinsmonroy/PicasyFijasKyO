@@ -10,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 @RequestMapping("/partidas")
 public class PartidaController {
@@ -21,12 +24,17 @@ public class PartidaController {
     }
 
     @GetMapping("/nueva")
-    public String nuevaPartida(Model model) {
+    public String nuevaPartida(@RequestParam Long usuarioId, Model model) {
 
         Partida partida = new Partida();
-        partida.setUsuario(new Usuario());
+
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+
+        partida.setUsuario(usuario);
 
         model.addAttribute("partida", partida);
+
         return "crear_partida";
     }
 
@@ -41,22 +49,36 @@ public class PartidaController {
     @GetMapping("/jugar/{id}")
     public String jugarVista(@PathVariable Long id, Model model) {
 
+        Partida partida = service.obtenerPorId(id);
+
+        model.addAttribute("partidaId", id);
+        model.addAttribute("intentoDTO", new IntentoDTO());
+        model.addAttribute("usuario", partida.getUsuario());
+
+        return "jugar";
+    }
+
+
+    @PostMapping("/intentar/{id}")
+    public String intentar(@PathVariable Long id,
+                           @ModelAttribute IntentoDTO dto,
+                           Model model,
+                           @SessionAttribute(value = "historial", required = false) List<ResultadoDTO> historial) {
+
+        if (historial == null) {
+            historial = new ArrayList<>();
+        }
+
+        ResultadoDTO resultado = service.jugar(id, dto.getIntento());
+        resultado.setIntento(dto.getIntento());
+
+        historial.add(resultado);
+
+        model.addAttribute("historial", historial);
         model.addAttribute("partidaId", id);
         model.addAttribute("intentoDTO", new IntentoDTO());
 
         return "jugar";
     }
 
-    @PostMapping("/intentar/{id}")
-    public String intentar(@PathVariable Long id,
-                           @ModelAttribute IntentoDTO dto,
-                           Model model) {
-
-        ResultadoDTO resultado = service.jugar(id, dto.getIntento());
-
-        model.addAttribute("resultado", resultado);
-        model.addAttribute("partidaId", id);
-
-        return "jugar";
-    }
 }
