@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="https://thymeleaf.org">
+<html xmlns:th="https://thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Picas y Fijas - En Juego</title>
+
     <style>
         body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f9; color: #333; }
         .container { max-width: 600px; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 auto; }
         .profile-container { text-align: center; margin-bottom: 20px; }
-        .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #007bff; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #007bff; display: block; margin: 0 auto 10px; }
+        .attempts-counter { font-size: 18px; color: #007bff; margin: 10px 0; }
         input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; margin-bottom: 10px; text-align: center; letter-spacing: 5px; font-weight: bold; }
         button { background-color: #007bff; color: white; padding: 12px; border-radius: 4px; width: 100%; border: none; font-size: 16px; font-weight: bold; cursor: pointer; }
         button:hover { background-color: #0056b3; }
-        .btn-restart { background-color: #28a745; text-decoration: none; display: inline-block; width: auto; padding: 12px 25px; margin-top: 20px; color: white; border-radius: 4px; font-weight: bold; }
+        .btn-restart { background-color: #28a745; text-decoration: none; display: inline-block; padding: 12px 25px; margin-top: 20px; color: white; border-radius: 4px; font-weight: bold; }
         .btn-restart:hover { background-color: #218838; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background-color: #f8f9fa; }
         .error-message { color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; }
 
-        /*  PANTALLA FINAL */
+        /* 🎉 PANTALLA DE VICTORIA */
         .victory-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -31,7 +33,7 @@
         .victory-screen p { font-size: 1.5em; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /*  CONFETTI */
+        /* 🎊 CONFETTI */
         .confetti { position: absolute; width: 10px; height: 10px; top: -10px; animation: fall 4s linear infinite; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
     </style>
@@ -40,15 +42,14 @@
 
 <div class="container">
 
-    <!--  PANTALLA DE VICTORIA (Evita error de índice -1 verificando que la lista no esté vacía primero) -->
-    <div th:if="${historial != null and !historial.isEmpty() and historial.get(historial.size()-1).fijas == 4}" class="victory-screen">
+    <!-- ✅ PANTALLA DE VICTORIA -->
+    <div th:if="${ganado}" class="victory-screen">
         <h1>🎉 ¡GANASTE! 🎉</h1>
         <p>Encontraste el número secreto 😎</p>
 
-        <!-- CORREGIDO: Etiqueta de enlace HTML bien estructurada -->
-        <a th:href="@{/usuarios/nuevo}" class="btn-restart">🔄 Jugar de nuevo</a>
-
-        <!-- CONFETTI -->
+        <!--  JUGAR DE NUEVO (Pasando el parámetro del usuario para saltar el registro) -->
+        <a th:href="@{/partidas/nueva}" class="btn-restart" </a>
+        <!-- 🎊 CONFETTI -->
         <script>
             for (let i = 0; i < 100; i++) {
                 let confetti = document.createElement("div");
@@ -61,23 +62,26 @@
         </script>
     </div>
 
-    <!--  CONTENIDO DE JUEGO -->
+    <!--  PERFIL -->
     <div class="profile-container">
-        <!-- CORREGIDO: Imagen HTML y textos reparados -->
-        <img th:src="${usuario.avatarUrl != null ? usuario.avatarUrl : 'https://placeholder.com'}" class="avatar" alt="Avatar">
-        <h2>Picas y Fijas</h2>
-        <p style="text-align:center; font-size:18px; color:#007bff;">
-            🔢 Intentos: <strong th:text="${historial.size()}">0</strong>
+        <!--  IMAGEN DE AVATAR (Con corrección del tag abierto y fallback onerror) -->
+        <img th:src="${usuario.avatarUrl}"
+             onerror="this.src='https://i.imgur.com/Z7AzH2c.png'"
+             class="avatar"
+             alt="Avatar de usuario">
+
+        <p class="attempts-counter">
+            🔢 Intentos: <strong th:text="${historial != null ? #lists.size(historial) : 0}">0</strong>
         </p>
+
         <p>Partida ID: <span th:text="${partidaId}">-</span></p>
     </div>
 
-    <!-- Mensaje de error si el input es inválido -->
-    <div class="error-message" th:if="${error}" th:text="${error}"></div>
+    <!--  ERROR -->
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
 
-    <!-- FORMULARIO DE INTENTOS (Solo se muestra si la lista está vacía o si el último intento no logró 4 fijas) -->
-    <div th:if="${historial == null || historial.isEmpty() || historial.get(historial.size()-1).fijas != 4}">
-        <!-- CORREGIDO: Sintaxis interna del formulario reparada -->
+    <!--  FORMULARIO -->
+    <div th:if="${!ganado}">
         <form th:action="@{/partidas/intentar/{id}(id=${partidaId})}" th:object="${intentoDTO}" method="post">
             <input type="text"
                    th:field="*{intento}"
@@ -85,8 +89,7 @@
                    maxlength="4"
                    pattern="\d{4}"
                    title="Debes ingresar exactamente 4 números"
-                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                   onpaste="setTimeout(() => this.value = this.value.replace(/\D/g, ''), 0)"
+                   oninput="this.value = this.value.replace(/\D/g, '')"
                    required
                    autocomplete="off">
 
@@ -94,7 +97,7 @@
         </form>
     </div>
 
-    <!-- TABLA DE HISTORIAL -->
+    <!--  TABLA DE HISTORIAL -->
     <table>
         <thead>
         <tr>
