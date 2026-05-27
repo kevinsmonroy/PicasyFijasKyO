@@ -65,7 +65,8 @@ public class PartidaController {
 
     //  NUEVA PARTIDA RÁPIDA (SIN FORMULARIO)
     @GetMapping("/nueva")
-    public String nuevaPartida(HttpSession session) {
+    public String nuevaPartida(@RequestParam(required = false) Integer maxIntentos,
+                               HttpSession session) {
 
         Long usuarioId = (Long) session.getAttribute("usuarioId");
 
@@ -73,18 +74,21 @@ public class PartidaController {
             return "redirect:/usuarios/nuevo";
         }
 
-        //  LIMPIAR
         session.removeAttribute("historial");
         session.removeAttribute("resultado");
         session.removeAttribute("error");
 
-        //  CREAR PARTIDA CON DEFAULT
         Partida partida = new Partida();
         Usuario usuario = new Usuario();
         usuario.setId(usuarioId);
-
         partida.setUsuario(usuario);
-        partida.setMaxIntentos(10); //
+
+
+        if (maxIntentos == null || maxIntentos == 0) {
+            partida.setMaxIntentos(10); // default
+        } else {
+            partida.setMaxIntentos(maxIntentos);
+        }
 
         Partida partidaGuardada = service.crearPartida(partida);
 
