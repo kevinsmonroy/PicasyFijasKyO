@@ -82,8 +82,8 @@
         <p style="font-size: 1.2em; margin-top: 10px;">
             🔍 El número secreto era: <strong style="color: #ffcc00; font-size: 1.4em;" th:text="${partida.numeroSecreto}">0000</strong>
         </p>
+        <a th:href="@{/partidas/nueva(maxIntentos=${partida.maxIntentos})}" class="btn-restart">🔄 Intentar de nuevo</a>
 
-        <a th:href="@{/partidas/nueva}" class="btn-restart">🔄 Intentar de nuevo</a>
         <a href="/partidas/formulario">Cambiar dificultad</a>
 
     </div>
