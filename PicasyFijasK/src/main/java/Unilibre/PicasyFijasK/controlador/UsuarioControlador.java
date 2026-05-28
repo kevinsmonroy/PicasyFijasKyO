@@ -1,8 +1,8 @@
-package Unilibre.PicasyFijasK.controller;
+package Unilibre.PicasyFijasK.controlador;
 
 import Unilibre.PicasyFijasK.dto.UsuarioDTO;
-import Unilibre.PicasyFijasK.entity.Usuario;
-import Unilibre.PicasyFijasK.service.UsuarioService;
+import Unilibre.PicasyFijasK.entidad.Usuario;
+import Unilibre.PicasyFijasK.servicio.UsuarioServicio;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/usuarios")
-public class UsuarioController {
+public class UsuarioControlador {
 
-    private final UsuarioService service;
+    private final UsuarioServicio service;
 
-    public UsuarioController(UsuarioService service) {
+    public UsuarioControlador(UsuarioServicio service) {
         this.service = service;
     }
 

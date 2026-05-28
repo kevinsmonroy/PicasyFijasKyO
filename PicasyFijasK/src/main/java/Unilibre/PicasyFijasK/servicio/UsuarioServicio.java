@@ -1,17 +1,17 @@
-package Unilibre.PicasyFijasK.service;
+package Unilibre.PicasyFijasK.servicio;
 
-import Unilibre.PicasyFijasK.entity.Usuario;
-import Unilibre.PicasyFijasK.repository.UsuarioRepository;
+import Unilibre.PicasyFijasK.entidad.Usuario;
+import Unilibre.PicasyFijasK.repositorio.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UsuarioService {
+public class UsuarioServicio {
 
     private final UsuarioRepository repository;
 
-    public UsuarioService(UsuarioRepository repository) {
+    public UsuarioServicio(UsuarioRepository repository) {
         this.repository = repository;
     }
 

@@ -1,6 +1,6 @@
-package Unilibre.PicasyFijasK.repository;
+package Unilibre.PicasyFijasK.repositorio;
 
-import Unilibre.PicasyFijasK.entity.Usuario;
+import Unilibre.PicasyFijasK.entidad.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {

@@ -1,10 +1,10 @@
-package Unilibre.PicasyFijasK.controller;
+package Unilibre.PicasyFijasK.controlador;
 
 import Unilibre.PicasyFijasK.dto.IntentoDTO;
 import Unilibre.PicasyFijasK.dto.ResultadoDTO;
-import Unilibre.PicasyFijasK.entity.Partida;
-import Unilibre.PicasyFijasK.entity.Usuario;
-import Unilibre.PicasyFijasK.service.PartidaService;
+import Unilibre.PicasyFijasK.entidad.Partida;
+import Unilibre.PicasyFijasK.entidad.Usuario;
+import Unilibre.PicasyFijasK.servicio.PartidaServicio;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -16,11 +16,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/partidas")
-public class PartidaController {
+public class PartidaControlador {
 
-    private final PartidaService service;
+    private final PartidaServicio service;
 
-    public PartidaController(PartidaService service) {
+    public PartidaControlador(PartidaServicio service) {
         this.service = service;
     }
 

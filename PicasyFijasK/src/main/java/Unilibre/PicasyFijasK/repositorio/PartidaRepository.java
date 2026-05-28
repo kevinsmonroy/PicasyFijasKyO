@@ -1,6 +1,6 @@
-package Unilibre.PicasyFijasK.repository;
+package Unilibre.PicasyFijasK.repositorio;
 
-import Unilibre.PicasyFijasK.entity.Partida;
+import Unilibre.PicasyFijasK.entidad.Partida;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

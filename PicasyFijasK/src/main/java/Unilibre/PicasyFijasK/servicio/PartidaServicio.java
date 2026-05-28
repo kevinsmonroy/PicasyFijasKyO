@@ -1,27 +1,27 @@
-package Unilibre.PicasyFijasK.service;
+package Unilibre.PicasyFijasK.servicio;
 
 import Unilibre.PicasyFijasK.dto.ResultadoDTO;
-import Unilibre.PicasyFijasK.entity.Partida;
-import Unilibre.PicasyFijasK.repository.PartidaRepository;
+import Unilibre.PicasyFijasK.entidad.Partida;
+import Unilibre.PicasyFijasK.repositorio.PartidaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PartidaService {
+public class PartidaServicio {
 
     private final PartidaRepository repository;
-    private final JuegoService juegoService;
+    private final JuegoServicio juegoServicio;
 
-    public PartidaService(PartidaRepository repository, JuegoService juegoService) {
+    public PartidaServicio(PartidaRepository repository, JuegoServicio juegoServicio) {
         this.repository = repository;
-        this.juegoService = juegoService;
+        this.juegoServicio = juegoServicio;
     }
 
     public Partida crearPartida(Partida partida) {
 
         // generar número secreto automáticamente
-        String numeroSecreto = juegoService.generarNumero();
+        String numeroSecreto = juegoServicio.generarNumero();
 
         partida.setNumeroSecreto(numeroSecreto);
         partida.setIntentos(0);
@@ -46,7 +46,7 @@ public class PartidaService {
                 .orElseThrow(() -> new RuntimeException("Partida no encontrada"));
 
         // usar la lógica del juego
-        ResultadoDTO resultado = juegoService.evaluar(
+        ResultadoDTO resultado = juegoServicio.evaluar(
                 partida.getNumeroSecreto(),
                 intento
         );

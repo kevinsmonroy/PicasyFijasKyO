@@ -1,4 +1,4 @@
-package Unilibre.PicasyFijasK.entity;
+package Unilibre.PicasyFijasK.entidad;
 
 import jakarta.persistence.*;
 import lombok.*;

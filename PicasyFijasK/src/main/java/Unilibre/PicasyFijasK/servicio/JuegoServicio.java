@@ -1,4 +1,4 @@
-package Unilibre.PicasyFijasK.service;
+package Unilibre.PicasyFijasK.servicio;
 
 import Unilibre.PicasyFijasK.dto.ResultadoDTO;
 import org.springframework.stereotype.Service;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class JuegoService {
+public class JuegoServicio {
 
     public String generarNumero() {
         List<Integer> numeros = new ArrayList<>();
